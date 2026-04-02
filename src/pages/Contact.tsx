@@ -1,0 +1,170 @@
+import { useState } from "react";
+import { Phone, Mail, MapPin, MessageCircle, Send } from "lucide-react";
+import SectionReveal from "@/components/SectionReveal";
+import { toast } from "sonner";
+
+const Contact = () => {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Message sent successfully");
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+
+  return (
+    <main className="pt-28 pb-24">
+      <div className="max-w-7xl mx-auto px-6">
+        <SectionReveal>
+          <span className="font-sans text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Reach Out
+          </span>
+          <h1 className="font-serif text-5xl md:text-6xl tracking-tight text-foreground mt-2 mb-6">
+            Get in Touch
+          </h1>
+        </SectionReveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
+          {/* Form */}
+          <SectionReveal>
+            <form
+              onSubmit={handleSubmit}
+              className="bg-card rounded-3xl shadow-card p-8 space-y-5"
+            >
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition"
+                  placeholder="Your name"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition"
+                  placeholder="you@email.com"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition"
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Message
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition resize-none"
+                  placeholder="Tell us about your requirements..."
+                />
+              </div>
+              <button
+                type="submit" onClick={handleSubmit}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:scale-[1.01] transition-transform duration-200 flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" /> Send Inquiry
+              </button>
+            </form>
+          </SectionReveal>
+
+          {/* Info */}
+          <SectionReveal>
+            <div className="space-y-6">
+              <div className="bg-card rounded-3xl shadow-card p-8">
+                <h3 className="font-semibold text-foreground mb-4">
+                  Contact Information
+                </h3>
+                <div className="space-y-4">
+                  <a
+                    href="tel:+919876543210"
+                    className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Phone className="w-5 h-5 text-secondary" /> +91 98765 43210
+                  </a>
+                  <a
+                    href="mailto:info@Brickstonerealestate.com"
+                    className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Mail className="w-5 h-5 text-secondary" />{" "}
+                    info@Brickstonerealestate.com
+                  </a>
+                  <span className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <MapPin className="w-5 h-5 text-secondary shrink-0 mt-0.5" />{" "}
+                    123 Business Avenue, BKC, Mumbai, Maharashtra 400051
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20a%20property."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-[#25D366] text-primary-foreground py-3.5 rounded-xl font-semibold hover:scale-[1.01] transition-transform duration-200"
+              >
+                <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
+              </a>
+
+              {/* Map */}
+              <div className="rounded-3xl overflow-hidden aspect-[4/3] shadow-card">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.7063153093!2d72.8600!3d19.0600!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDAzJzM2LjAiTiA3MsKwNTEnMzYuMCJF!5e0!3m2!1sen!2sin!4v1600000000000"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  title="Brickstone Real Estate Location"
+                />
+              </div>
+            </div>
+          </SectionReveal>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default Contact;
