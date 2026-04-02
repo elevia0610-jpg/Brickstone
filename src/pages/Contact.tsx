@@ -10,7 +10,7 @@ const Contact = () => {
     e.preventDefault();
 
     try {
-      const BACKEND_API_URL = import.meta.env.BACKEND_API_URL;
+      const BACKEND_API_URL = import.meta.env.VITE_API_URL;
       const res = await fetch(`${BACKEND_API_URL}/api/contact`, {
         method: "POST",
         headers: {
