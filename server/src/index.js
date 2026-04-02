@@ -18,16 +18,11 @@ const allowedOrigins = (
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    },
+    origin: process.env.CORS_ORIGINS.split(","),
     credentials: true,
   })
 );
+app.options("*", cors());
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", (_req, res) => {
