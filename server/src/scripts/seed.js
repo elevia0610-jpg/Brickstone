@@ -25,8 +25,8 @@ const SAMPLE_IMAGES = {
 async function seed() {
   await mongoose.connect(uri);
 
-  const username = process.env.ADMIN_USERNAME || "admin";
-  const password = process.env.ADMIN_PASSWORD || "changeme";
+  const username = process.env.ADMIN_USERNAME;
+  const password = process.env.ADMIN_PASSWORD;
 
   let admin = await Admin.findOne({ username }).exec();
   if (!admin) {
