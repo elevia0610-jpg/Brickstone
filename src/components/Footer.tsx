@@ -49,15 +49,13 @@ const Footer = () => (
             Contact
           </h4>
           <div className="flex flex-col gap-3 text-sm opacity-70">
-            <a href="tel:+919876543210" className="flex items-center gap-2 hover:opacity-100 transition-opacity">
-              <Phone className="w-4 h-4" /> +91 98765 43210
+            <a href="tel:+917428311662" className="flex items-center gap-2 hover:opacity-100 transition-opacity">
+              <Phone className="w-4 h-4" /> +91 74283 11662
             </a>
             <a href="mailto:info@Brickstonerealestate.com" className="flex items-center gap-2 hover:opacity-100 transition-opacity">
               <Mail className="w-4 h-4" /> info@Brickstonerealestate.com
             </a>
-            <span className="flex items-start gap-2">
-              <MapPin className="w-4 h-4 mt-0.5 shrink-0" /> 123 Business Avenue, BKC, Mumbai
-            </span>
+            
           </div>
         </div>
       </div>

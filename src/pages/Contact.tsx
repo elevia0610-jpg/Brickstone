@@ -86,7 +86,7 @@ const Contact = () => {
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 74283 11662"
                 />
               </div>
               <div>
@@ -120,10 +120,10 @@ const Contact = () => {
                 </h3>
                 <div className="space-y-4">
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+917428311662"
                     className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <Phone className="w-5 h-5 text-secondary" /> +91 98765 43210
+                    <Phone className="w-5 h-5 text-secondary" /> +91 74283 11662
                   </a>
                   <a
                     href="mailto:info@Brickstonerealestate.com"
@@ -132,15 +132,12 @@ const Contact = () => {
                     <Mail className="w-5 h-5 text-secondary" />{" "}
                     info@Brickstonerealestate.com
                   </a>
-                  <span className="flex items-start gap-3 text-sm text-muted-foreground">
-                    <MapPin className="w-5 h-5 text-secondary shrink-0 mt-0.5" />{" "}
-                    123 Business Avenue, BKC, Mumbai, Maharashtra 400051
-                  </span>
+                  
                 </div>
               </div>
 
               <a
-                href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20a%20property."
+                href="https://wa.me/917428311662?text=Hi%2C%20I%27m%20interested%20in%20a%20property."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-[#25D366] text-primary-foreground py-3.5 rounded-xl font-semibold hover:scale-[1.01] transition-transform duration-200"
@@ -148,18 +145,7 @@ const Contact = () => {
                 <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
               </a>
 
-              {/* Map */}
-              <div className="rounded-3xl overflow-hidden aspect-[4/3] shadow-card">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.7063153093!2d72.8600!3d19.0600!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDAzJzM2LjAiTiA3MsKwNTEnMzYuMCJF!5e0!3m2!1sen!2sin!4v1600000000000"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  title="Brickstone Real Estate Location"
-                />
-              </div>
+              
             </div>
           </SectionReveal>
         </div>
