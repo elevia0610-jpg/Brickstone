@@ -57,14 +57,45 @@ export default function AdminProperties() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Omit<Property, "id">>(emptyForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const fd = new FormData();
+      fd.append("title", form.title);
+      fd.append("price", form.price);
+      fd.append("location", form.location);
+      fd.append("type", form.type);
+      fd.append("propertyType", form.propertyType);
+      fd.append("bedrooms", String(form.bedrooms));
+      fd.append("bathrooms", String(form.bathrooms));
+      fd.append("area", form.area);
+      fd.append("featured", String(!!form.featured));
+
+      if (!imageFile && !editingId) {
+        toast.error("Please upload an image");
+        return;
+      }
+      if (imageFile instanceof File) {
+        fd.append("image", imageFile);
+      }
       if (editingId) {
-        await api.put(`/api/properties/${editingId}`, form);
+        await api.put(`/api/properties/${editingId}`, fd);
       } else {
-        await api.post("/api/properties", form);
+        await api.post("/api/properties", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
     },
     onSuccess: () => {
@@ -73,6 +104,8 @@ export default function AdminProperties() {
       setDialogOpen(false);
       setEditingId(null);
       setForm(emptyForm);
+      setImageFile(null);
+      setImagePreview("");
     },
     onError: (err) => toast.error(getErrorMessage(err)),
   });
@@ -92,6 +125,8 @@ export default function AdminProperties() {
   function openCreate() {
     setEditingId(null);
     setForm(emptyForm);
+    setImageFile(null);
+    setImagePreview("");
     setDialogOpen(true);
   }
 
@@ -109,6 +144,8 @@ export default function AdminProperties() {
       image: p.image,
       featured: p.featured ?? false,
     });
+    setImageFile(null);
+    setImagePreview(p.image);
     setDialogOpen(true);
   }
 
@@ -303,14 +340,38 @@ export default function AdminProperties() {
               />
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
-              <label className="admin-label">Image URL</label>
+              <label className="admin-label">Image</label>
               <input
+                type="file"
+                accept="image/*"
                 className="admin-input"
-                value={form.image}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, image: e.target.value }))
-                }
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setImageFile(file);
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    setImagePreview(url);
+                  } else {
+                    setImagePreview(form.image || "");
+                  }
+                }}
               />
+              <input type="hidden" value={form.image} readOnly />
+              {imagePreview ? (
+                <div style={{ marginTop: 10 }}>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      maxHeight: 240,
+                      objectFit: "cover",
+                      borderRadius: 10,
+                      border: "1px solid #e4e4e7",
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
             <div style={{ gridColumn: "1 / -1" }} className="admin-checkbox-row">
               <input

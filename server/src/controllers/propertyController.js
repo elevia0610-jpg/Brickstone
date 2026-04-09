@@ -2,6 +2,25 @@ import { validationResult } from "express-validator";
 import { Property } from "../models/Property.js";
 import { toClientDoc, toClientList } from "../utils/serialize.js";
 
+function normalizePropertyPayload(req) {
+  const payload = { ...req.body };
+
+  if (req.file?.path) {
+    payload.image = req.file.path;
+  }
+
+  if (payload.bedrooms != null) payload.bedrooms = Number(payload.bedrooms);
+  if (payload.bathrooms != null) payload.bathrooms = Number(payload.bathrooms);
+  if (payload.featured != null) {
+    payload.featured =
+      payload.featured === true ||
+      payload.featured === "true" ||
+      payload.featured === "1";
+  }
+
+  return payload;
+}
+
 function handleValidation(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -17,7 +36,7 @@ function handleValidation(req, res) {
 export async function createProperty(req, res) {
   if (!handleValidation(req, res)) return;
   try {
-    const doc = await Property.create(req.body);
+    const doc = await Property.create(normalizePropertyPayload(req));
     res.status(201).json(toClientDoc(doc));
   } catch (err) {
     console.error(err);
@@ -54,10 +73,14 @@ export async function getPropertyById(req, res) {
 export async function updateProperty(req, res) {
   if (!handleValidation(req, res)) return;
   try {
-    const doc = await Property.findByIdAndUpdate(req.params.id, req.body, {
+    const doc = await Property.findByIdAndUpdate(
+      req.params.id,
+      normalizePropertyPayload(req),
+      {
       new: true,
       runValidators: true,
-    }).exec();
+      }
+    ).exec();
     if (!doc) {
       return res.status(404).json({ message: "Property not found" });
     }

@@ -15,7 +15,12 @@ const propertyFields = [
     .isInt({ min: 0 })
     .withMessage("Bathrooms must be a non-negative integer"),
   body("area").trim().notEmpty().withMessage("Area is required"),
-  body("image").trim().notEmpty().withMessage("Image URL is required"),
+  body("image")
+    .custom((value, { req }) => {
+      if (req.file) return true;
+      if (typeof value === "string" && value.trim().length > 0) return true;
+      throw new Error("Image is required");
+    }),
   body("featured").optional().isBoolean().withMessage("Featured must be boolean"),
 ];
 

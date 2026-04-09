@@ -2,6 +2,40 @@ import { validationResult } from "express-validator";
 import { Project } from "../models/Project.js";
 import { toClientDoc, toClientList } from "../utils/serialize.js";
 
+function normalizeHighlights(raw) {
+  if (raw == null) return raw;
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+    } catch {
+      // ignore
+    }
+    return trimmed
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return raw;
+}
+
+function normalizeProjectPayload(req) {
+  const payload = { ...req.body };
+
+  if (req.file?.path) {
+    payload.image = req.file.path;
+  }
+
+  if (payload.highlights != null) {
+    payload.highlights = normalizeHighlights(payload.highlights);
+  }
+
+  return payload;
+}
+
 function handleValidation(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -17,7 +51,7 @@ function handleValidation(req, res) {
 export async function createProject(req, res) {
   if (!handleValidation(req, res)) return;
   try {
-    const doc = await Project.create(req.body);
+    const doc = await Project.create(normalizeProjectPayload(req));
     res.status(201).json(toClientDoc(doc));
   } catch (err) {
     console.error(err);
@@ -54,10 +88,14 @@ export async function getProjectById(req, res) {
 export async function updateProject(req, res) {
   if (!handleValidation(req, res)) return;
   try {
-    const doc = await Project.findByIdAndUpdate(req.params.id, req.body, {
+    const doc = await Project.findByIdAndUpdate(
+      req.params.id,
+      normalizeProjectPayload(req),
+      {
       new: true,
       runValidators: true,
-    }).exec();
+      }
+    ).exec();
     if (!doc) {
       return res.status(404).json({ message: "Project not found" });
     }

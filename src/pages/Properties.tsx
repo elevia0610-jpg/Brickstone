@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useResolvedProperties } from "@/hooks/usePublicListings";
 import PropertyCard from "@/components/PropertyCard";
 import SectionReveal from "@/components/SectionReveal";
+import DetailsModal from "@/components/DetailsModal";
+import type { Property } from "@/lib/data";
 
 const types = ["All", "Buy", "Rent", "Lease"] as const;
 const propertyTypes = ["All", "Apartment", "Villa", "Commercial"] as const;
@@ -10,6 +12,7 @@ const Properties = () => {
   const [activeType, setActiveType] = useState<string>("All");
   const [activePropType, setActivePropType] = useState<string>("All");
   const { properties, isLoading, usingFallback } = useResolvedProperties();
+  const [selected, setSelected] = useState<Property | null>(null);
 
   const filtered = properties.filter((p) => {
     if (activeType !== "All" && p.type !== activeType) return false;
@@ -75,7 +78,11 @@ const Properties = () => {
             <p className="text-muted-foreground col-span-full">Loading…</p>
           ) : (
             filtered.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <PropertyCard
+                key={property.id}
+                property={property}
+                onSelect={(p) => setSelected(p)}
+              />
             ))
           )}
         </div>
@@ -86,6 +93,12 @@ const Properties = () => {
           </p>
         )}
       </div>
+      <DetailsModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        kind="property"
+        item={selected}
+      />
     </main>
   );
 };

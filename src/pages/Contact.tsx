@@ -4,14 +4,22 @@ import SectionReveal from "@/components/SectionReveal";
 import { toast } from "sonner";
 
 const Contact = () => {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    reasonToBuy: "Investment" as "Investment" | "Self Use",
+    isDealer: "No" as "Yes" | "No",
+    interests: [] as string[],
+  });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const BACKEND_API_URL = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${BACKEND_API_URL}/api/contact`, {
+      const base = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${base}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,13 +30,14 @@ const Contact = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Message sent successfully");
+        toast.success("Message sent successfully");
+        setForm((f) => ({ ...f, message: "", interests: [] }));
       } else {
-        alert(data.error);
+        toast.error(data.error || "Failed to send message");
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -83,11 +92,89 @@ const Contact = () => {
                 </label>
                 <input
                   type="tel"
+                  required
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full mt-2 bg-background border border-border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition"
                   placeholder="+91 74283 11662"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Your reason to buy
+                  </label>
+                  <div className="mt-3 space-y-2 text-sm">
+                    {(["Investment", "Self Use"] as const).map((v) => (
+                      <label
+                        key={v}
+                        className="flex items-center gap-2 text-muted-foreground"
+                      >
+                        <input
+                          type="radio"
+                          name="reasonToBuy"
+                          checked={form.reasonToBuy === v}
+                          onChange={() => setForm((f) => ({ ...f, reasonToBuy: v }))}
+                        />
+                        <span className="text-foreground">{v}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Are you a property dealer?
+                  </label>
+                  <div className="mt-3 space-y-2 text-sm">
+                    {(["Yes", "No"] as const).map((v) => (
+                      <label
+                        key={v}
+                        className="flex items-center gap-2 text-muted-foreground"
+                      >
+                        <input
+                          type="radio"
+                          name="isDealer"
+                          checked={form.isDealer === v}
+                          onChange={() => setForm((f) => ({ ...f, isDealer: v }))}
+                        />
+                        <span className="text-foreground">{v}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  Optional interests
+                </label>
+                <div className="mt-3 space-y-2 text-sm">
+                  {[
+                    { id: "Interested in Home Loan", label: "I am interested in home loan" },
+                    { id: "Interested in Site Visit", label: "I am interested in site visits" },
+                  ].map((opt) => (
+                    <label
+                      key={opt.id}
+                      className="flex items-center gap-2 text-muted-foreground"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.interests.includes(opt.id)}
+                        onChange={(e) => {
+                          setForm((f) => {
+                            const next = new Set(f.interests);
+                            if (e.target.checked) next.add(opt.id);
+                            else next.delete(opt.id);
+                            return { ...f, interests: Array.from(next) };
+                          });
+                        }}
+                      />
+                      <span className="text-foreground">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -126,11 +213,11 @@ const Contact = () => {
                     <Phone className="w-5 h-5 text-secondary" /> +91 74283 11662
                   </a>
                   <a
-                    href="mailto:info@Brickstonerealestate.com"
+                    href="mailto:brickstonerealestate01@gmail.com"
                     className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Mail className="w-5 h-5 text-secondary" />{" "}
-                    info@Brickstonerealestate.com
+                    brickstonerealestate01@gmail.com
                   </a>
                   
                 </div>

@@ -7,6 +7,7 @@ import {
   updateProject,
 } from "../controllers/projectController.js";
 import { requireAuth } from "../middleware/auth.js";
+import { uploadSingleImage } from "../middleware/upload.js";
 import {
   createProjectRules,
   updateProjectRules,
@@ -16,8 +17,8 @@ const router = Router();
 
 router.get("/", getProjects);
 router.get("/:id", getProjectById);
-router.post("/", requireAuth, createProjectRules, createProject);
-router.put("/:id", requireAuth, updateProjectRules, updateProject);
+router.post("/", requireAuth, uploadSingleImage, createProjectRules, createProject);
+router.put("/:id", requireAuth, uploadSingleImage, updateProjectRules, updateProject);
 router.delete("/:id", requireAuth, deleteProject);
 
 export default router;

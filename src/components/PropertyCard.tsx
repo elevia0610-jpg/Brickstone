@@ -3,13 +3,26 @@ import { MapPin, BedDouble, Bath, Maximize } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Property } from "@/lib/data";
 
-const PropertyCard = ({ property }: { property: Property }) => (
+const PropertyCard = ({
+  property,
+  onSelect,
+}: {
+  property: Property;
+  onSelect?: (p: Property) => void;
+}) => (
   <motion.div
     initial={{ opacity: 0, y: 12 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     className="group bg-card rounded-3xl shadow-card hover:shadow-card-hover transition-shadow duration-300 overflow-hidden"
+    role={onSelect ? "button" : undefined}
+    tabIndex={onSelect ? 0 : undefined}
+    onClick={() => onSelect?.(property)}
+    onKeyDown={(e) => {
+      if (!onSelect) return;
+      if (e.key === "Enter" || e.key === " ") onSelect(property);
+    }}
   >
     <div className="p-2">
       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
@@ -52,6 +65,7 @@ const PropertyCard = ({ property }: { property: Property }) => (
       <Link
         to="/contact"
         className="mt-4 block text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:scale-[1.02] transition-transform duration-200"
+        onClick={(e) => e.stopPropagation()}
       >
         Inquire Now
       </Link>

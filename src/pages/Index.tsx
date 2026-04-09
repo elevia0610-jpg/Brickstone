@@ -10,6 +10,8 @@ import {
 } from "@/hooks/usePublicListings";
 import PropertyCard from "@/components/PropertyCard";
 import SectionReveal from "@/components/SectionReveal";
+import DetailsModal from "@/components/DetailsModal";
+import type { Property, Project } from "@/lib/data";
 
 const tabs = ["Buy", "Rent", "Lease"] as const;
 
@@ -18,6 +20,8 @@ const Index = () => {
   const { properties, isLoading, usingFallback } = useResolvedProperties();
   const { projects: projectList, isLoading: projectsLoading } =
     useResolvedProjects();
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const featuredProperties = properties.filter((p) => p.featured);
 
@@ -121,7 +125,11 @@ const Index = () => {
             <p className="text-muted-foreground col-span-full">Loading…</p>
           ) : (
             featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <PropertyCard
+                key={property.id}
+                property={property}
+                onSelect={(p) => setSelectedProperty(p)}
+              />
             ))
           )}
         </div>
@@ -158,6 +166,12 @@ const Index = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                 className="group bg-background rounded-3xl shadow-card hover:shadow-card-hover transition-shadow duration-300 overflow-hidden"
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedProject(project)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setSelectedProject(project);
+                }}
               >
                 <div className="p-2">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
@@ -286,8 +300,22 @@ const Index = () => {
           </Link>
         </div>
       </SectionReveal>
+
+      <DetailsModal
+        open={!!selectedProperty}
+        onClose={() => setSelectedProperty(null)}
+        kind="property"
+        item={selectedProperty}
+      />
+      <DetailsModal
+        open={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+        kind="project"
+        item={selectedProject}
+      />
     </main>
   );
 };
 
 export default Index;
+

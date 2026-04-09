@@ -4,12 +4,15 @@ import { MapPin, CheckCircle } from "lucide-react";
 import { useResolvedProjects } from "@/hooks/usePublicListings";
 import SectionReveal from "@/components/SectionReveal";
 import { Link } from "react-router-dom";
+import DetailsModal from "@/components/DetailsModal";
+import type { Project } from "@/lib/data";
 
 const statuses = ["All", "Ongoing", "Completed"] as const;
 
 const Projects = () => {
   const [activeStatus, setActiveStatus] = useState<string>("All");
   const { projects, isLoading, usingFallback } = useResolvedProjects();
+  const [selected, setSelected] = useState<Project | null>(null);
 
   const filtered = projects.filter(
     (p) => activeStatus === "All" || p.status === activeStatus
@@ -61,6 +64,12 @@ const Projects = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
               className="group bg-card rounded-3xl shadow-card hover:shadow-card-hover transition-shadow duration-300 overflow-hidden flex flex-col md:flex-row"
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelected(project)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") setSelected(project);
+              }}
             >
               <div className="p-2 md:w-2/5">
                 <div className="relative aspect-[4/3] md:aspect-auto md:h-full rounded-2xl overflow-hidden">
@@ -107,6 +116,7 @@ const Projects = () => {
                 <Link
                   to="/contact"
                   className="mt-6 self-start bg-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-semibold hover:scale-[1.02] transition-transform duration-200"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   Inquire About This Project
                 </Link>
@@ -122,6 +132,12 @@ const Projects = () => {
           </p>
         )}
       </div>
+      <DetailsModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        kind="project"
+        item={selected}
+      />
     </main>
   );
 };
