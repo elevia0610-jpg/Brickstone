@@ -32,7 +32,6 @@ async function seed() {
   if (!admin) {
     const passwordHash = await bcrypt.hash(password, 10);
     admin = await Admin.create({ username, passwordHash });
-    console.log(`Created admin user: ${username}`);
   } else {
     console.log(`Admin user already exists: ${username}`);
   }
@@ -77,7 +76,6 @@ async function seed() {
         featured: true,
       },
     ]);
-    console.log("Seeded sample properties");
   } else {
     console.log("Properties collection not empty, skipping property seed");
   }
@@ -131,7 +129,6 @@ async function seed() {
         image: SAMPLE_IMAGES.pr3,
       },
     ]);
-    console.log("Seeded sample projects");
   } else {
     console.log("Projects collection not empty, skipping project seed");
   }
