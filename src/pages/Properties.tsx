@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useResolvedProperties } from "@/hooks/usePublicListings";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "@/lib/api"; // ✅ USE THIS (not axios)
 
 import PropertyCard from "@/components/PropertyCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -17,22 +17,35 @@ const Properties = () => {
   const { properties, isLoading, usingFallback } = useResolvedProperties();
   const [selected, setSelected] = useState<Property | null>(null);
 
-  // ✅ Fetch dynamic property types
-  const { data: propertyTypesData, isLoading: typesLoading } = useQuery({
+  // ✅ SAFE FETCH (handles wrong API responses)
+  const {
+    data: propertyTypesData = [],
+    isLoading: typesLoading,
+  } = useQuery({
     queryKey: ["propertyTypes"],
     queryFn: async () => {
-      const res = await axios.get("/api/property-types");
-      return res.data;
+      const res = await api.get("/api/property-types");
+
+      // ✅ Always return array (prevents crash)
+      if (Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res.data?.data)) return res.data.data;
+
+      return []; // fallback
     },
   });
 
-  // ✅ Build dynamic filter list
+  // ✅ SAFE ARRAY (prevents .map crash)
+  const safePropertyTypes = Array.isArray(propertyTypesData)
+    ? propertyTypesData
+    : [];
+
+  // ✅ Build filter list safely
   const propertyTypes = [
     "All",
-    ...(propertyTypesData?.map((t: any) => t.name) || []),
+    ...safePropertyTypes.map((t: any) => t.name),
   ];
 
-  // ✅ Filtering logic (unchanged but dynamic)
+  // ✅ Filtering logic
   const filtered = properties.filter((p) => {
     if (activeType !== "All" && p.type !== activeType) return false;
     if (activePropType !== "All" && p.propertyType !== activePropType)
@@ -47,13 +60,14 @@ const Properties = () => {
           <span className="font-sans text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Browse
           </span>
+
           <h1 className="font-serif text-5xl md:text-6xl tracking-tight text-foreground mt-2 mb-8">
             Properties
           </h1>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-6 mb-12">
-            {/* Type Filter */}
+            {/* TYPE FILTER */}
             <div className="flex bg-muted rounded-2xl p-1">
               {types.map((t) => (
                 <button
@@ -70,11 +84,15 @@ const Properties = () => {
               ))}
             </div>
 
-            {/* ✅ Dynamic Property Type Filter */}
+            {/* PROPERTY TYPE FILTER */}
             <div className="flex bg-muted rounded-2xl p-1">
               {typesLoading ? (
                 <span className="px-5 py-2 text-sm text-muted-foreground">
                   Loading...
+                </span>
+              ) : propertyTypes.length === 1 ? (
+                <span className="px-5 py-2 text-sm text-muted-foreground">
+                  No types available
                 </span>
               ) : (
                 propertyTypes.map((t) => (
@@ -95,12 +113,14 @@ const Properties = () => {
           </div>
         </SectionReveal>
 
+        {/* FALLBACK INFO */}
         {usingFallback && (
           <p className="text-xs text-muted-foreground mb-6">
             Showing bundled listings (API unavailable).
           </p>
         )}
 
+        {/* PROPERTY GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {isLoading && properties.length === 0 ? (
             <p className="text-muted-foreground col-span-full">Loading…</p>
@@ -115,6 +135,7 @@ const Properties = () => {
           )}
         </div>
 
+        {/* EMPTY STATE */}
         {!isLoading && filtered.length === 0 && (
           <p className="text-center text-muted-foreground py-16">
             No properties match your filters.
@@ -122,6 +143,7 @@ const Properties = () => {
         )}
       </div>
 
+      {/* MODAL */}
       <DetailsModal
         open={!!selected}
         onClose={() => setSelected(null)}
