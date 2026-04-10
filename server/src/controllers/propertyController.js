@@ -11,13 +11,21 @@ function normalizePropertyPayload(req) {
 
   if (payload.bedrooms != null) payload.bedrooms = Number(payload.bedrooms);
   if (payload.bathrooms != null) payload.bathrooms = Number(payload.bathrooms);
+  if (payload.highlights) {
+    if (typeof payload.highlights === "string") {
+      try {
+        payload.highlights = JSON.parse(payload.highlights);
+      } catch {
+        payload.highlights = [payload.highlights];
+      }
+    }
+  }
   if (payload.featured != null) {
     payload.featured =
       payload.featured === true ||
       payload.featured === "true" ||
       payload.featured === "1";
   }
-
   return payload;
 }
 

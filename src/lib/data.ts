@@ -19,6 +19,8 @@ export type Property = {
   area: string;
   image: string;
   featured?: boolean;
+  description: string;
+  highlights: string[];
 };
 
 export type Project = {
@@ -45,6 +47,12 @@ export const properties: Property[] = [
     area: "2,800 sq.ft",
     image: property1,
     featured: true,
+    description:
+      "Experience the epitome of luxury living in our Skyline Penthouse, boasting breathtaking city views, state-of-the-art amenities, and exquisite interiors designed for the discerning homeowner.",
+    highlights: [
+      "Panoramic city views",
+      "Private rooftop terrace",
+    ],
   },
   {
     id: "2",
@@ -58,6 +66,12 @@ export const properties: Property[] = [
     area: "4,200 sq.ft",
     image: property2,
     featured: true,
+    description:
+      "Step into timeless elegance with our Heritage Row Villa, a beautifully restored property that combines classic architecture with modern comforts, nestled in the heart of Koregaon Park.",
+    highlights: [
+      "Restored heritage architecture",
+      "Spacious garden and pool",
+    ],
   },
   {
     id: "3",
@@ -71,42 +85,12 @@ export const properties: Property[] = [
     area: "3,500 sq.ft",
     image: property3,
     featured: true,
-  },
-  {
-    id: "4",
-    title: "Sunset Terrace",
-    price: "₹2.1 Cr",
-    location: "Juhu, Mumbai",
-    type: "Buy",
-    propertyType: "Apartment",
-    bedrooms: 3,
-    bathrooms: 2,
-    area: "1,800 sq.ft",
-    image: property4,
-  },
-  {
-    id: "5",
-    title: "Palm Cove Residence",
-    price: "₹45,000/mo",
-    location: "Whitefield, Bangalore",
-    type: "Rent",
-    propertyType: "Villa",
-    bedrooms: 3,
-    bathrooms: 3,
-    area: "2,400 sq.ft",
-    image: property5,
-  },
-  {
-    id: "6",
-    title: "Urban Office Suite",
-    price: "₹75,000/mo",
-    location: "Andheri East, Mumbai",
-    type: "Lease",
-    propertyType: "Commercial",
-    bedrooms: 0,
-    bathrooms: 1,
-    area: "1,200 sq.ft",
-    image: property3,
+    description:
+      "Elevate your business presence with our Metro Business Hub, a premium commercial space located in the bustling BKC area, offering modern design, high foot traffic, and unparalleled connectivity.",
+    highlights: [
+      "Prime BKC location",
+      "Modern office design",
+    ],  
   },
 ];
 

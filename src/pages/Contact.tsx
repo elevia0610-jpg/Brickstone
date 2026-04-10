@@ -213,11 +213,11 @@ const Contact = () => {
                     <Phone className="w-5 h-5 text-secondary" /> +91 74283 11662
                   </a>
                   <a
-                    href="mailto:brickstonerealestate01@gmail.com"
+                    href="mailto:info@brickstonerealestate.in"
                     className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Mail className="w-5 h-5 text-secondary" />{" "}
-                    brickstonerealestate01@gmail.com
+                    info@brickstonerealestate.in
                   </a>
                   
                 </div>

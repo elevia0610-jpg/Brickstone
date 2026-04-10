@@ -48,7 +48,7 @@ export default function AdminPropertyTypes() {
   const createMutation = useMutation({
     mutationFn: async () => {
       if (!name.trim()) {
-        toast.error("Property type name is required");
+        toast.error("Property type is required");
         return;
       }
 
@@ -71,7 +71,7 @@ export default function AdminPropertyTypes() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["propertyTypes"] });
-      toast.success("Property type deleted");
+      toast.success("Deleted successfully");
       setDeleteId(null);
     },
     onError: (err) => toast.error(getErrorMessage(err)),
@@ -84,25 +84,26 @@ export default function AdminPropertyTypes() {
 
   return (
     <>
-      {/* Header */}
+      {/* HEADER */}
       <div className="admin-toolbar">
         <h1 className="admin-page-title" style={{ margin: 0 }}>
           Property Types
         </h1>
         <button type="button" className="admin-btn" onClick={openCreate}>
-          Add property type
+          Add Property Type
         </button>
       </div>
 
-      {/* Table */}
+      {/* TABLE */}
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>
               <th>Name</th>
-              <th />
+              <th style={{ width: 120 }}>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {isLoading && (
               <tr>
@@ -115,7 +116,7 @@ export default function AdminPropertyTypes() {
             {!isLoading && list.length === 0 && (
               <tr>
                 <td colSpan={2} className="admin-muted">
-                  No property types yet.
+                  No property types yet. Add one to get started.
                 </td>
               </tr>
             )}
@@ -123,9 +124,8 @@ export default function AdminPropertyTypes() {
             {list.map((type: any) => (
               <tr key={type._id}>
                 <td>{type.name}</td>
-                <td style={{ whiteSpace: "nowrap" }}>
+                <td>
                   <button
-                    type="button"
                     className="admin-btn admin-btn-danger"
                     style={{ padding: "0.35rem 0.65rem" }}
                     onClick={() => setDeleteId(type._id)}
@@ -139,7 +139,7 @@ export default function AdminPropertyTypes() {
         </table>
       </div>
 
-      {/* Create Dialog */}
+      {/* CREATE MODAL */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -147,25 +147,24 @@ export default function AdminPropertyTypes() {
           </DialogHeader>
 
           <div>
-            <label className="admin-label">Name</label>
+            <label className="admin-label">Property Type Name</label>
             <input
               className="admin-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Apartment"
+              placeholder="e.g. Apartment, Villa"
             />
           </div>
 
           <DialogFooter>
             <Button
-              type="button"
               variant="outline"
               onClick={() => setDialogOpen(false)}
             >
               Cancel
             </Button>
+
             <Button
-              type="button"
               onClick={() => createMutation.mutate()}
               disabled={createMutation.isPending}
             >
@@ -175,11 +174,13 @@ export default function AdminPropertyTypes() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
+      {/* DELETE CONFIRMATION */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete property type?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Delete property type?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               This cannot be undone.
             </AlertDialogDescription>
@@ -187,6 +188,7 @@ export default function AdminPropertyTypes() {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
+
             <AlertDialogAction
               onClick={() => deleteId && deleteMutation.mutate(deleteId)}
             >

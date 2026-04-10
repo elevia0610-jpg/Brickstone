@@ -24,6 +24,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProperties from "./pages/admin/AdminProperties";
 import AdminProjects from "./pages/admin/AdminProjects";
+import AdminPropertyTypes from "./pages/admin/AdminPropertyTypes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,6 +58,7 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="properties" element={<AdminProperties />} />
                 <Route path="projects" element={<AdminProjects />} />
+                <Route path="property-types" element={<AdminPropertyTypes />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Route>
             </Route>

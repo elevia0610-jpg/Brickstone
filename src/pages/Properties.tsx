@@ -1,19 +1,38 @@
 import { useState } from "react";
 import { useResolvedProperties } from "@/hooks/usePublicListings";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
 import PropertyCard from "@/components/PropertyCard";
 import SectionReveal from "@/components/SectionReveal";
 import DetailsModal from "@/components/DetailsModal";
 import type { Property } from "@/lib/data";
 
 const types = ["All", "Buy", "Rent", "Lease"] as const;
-const propertyTypes = ["All", "Apartment", "Villa", "Commercial"] as const;
 
 const Properties = () => {
   const [activeType, setActiveType] = useState<string>("All");
   const [activePropType, setActivePropType] = useState<string>("All");
+
   const { properties, isLoading, usingFallback } = useResolvedProperties();
   const [selected, setSelected] = useState<Property | null>(null);
 
+  // ✅ Fetch dynamic property types
+  const { data: propertyTypesData, isLoading: typesLoading } = useQuery({
+    queryKey: ["propertyTypes"],
+    queryFn: async () => {
+      const res = await axios.get("/api/property-types");
+      return res.data;
+    },
+  });
+
+  // ✅ Build dynamic filter list
+  const propertyTypes = [
+    "All",
+    ...(propertyTypesData?.map((t: any) => t.name) || []),
+  ];
+
+  // ✅ Filtering logic (unchanged but dynamic)
   const filtered = properties.filter((p) => {
     if (activeType !== "All" && p.type !== activeType) return false;
     if (activePropType !== "All" && p.propertyType !== activePropType)
@@ -34,6 +53,7 @@ const Properties = () => {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-6 mb-12">
+            {/* Type Filter */}
             <div className="flex bg-muted rounded-2xl p-1">
               {types.map((t) => (
                 <button
@@ -49,20 +69,28 @@ const Properties = () => {
                 </button>
               ))}
             </div>
+
+            {/* ✅ Dynamic Property Type Filter */}
             <div className="flex bg-muted rounded-2xl p-1">
-              {propertyTypes.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setActivePropType(t)}
-                  className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    activePropType === t
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+              {typesLoading ? (
+                <span className="px-5 py-2 text-sm text-muted-foreground">
+                  Loading...
+                </span>
+              ) : (
+                propertyTypes.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setActivePropType(t)}
+                    className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      activePropType === t
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))
+              )}
             </div>
           </div>
         </SectionReveal>
@@ -93,6 +121,7 @@ const Properties = () => {
           </p>
         )}
       </div>
+
       <DetailsModal
         open={!!selected}
         onClose={() => setSelected(null)}

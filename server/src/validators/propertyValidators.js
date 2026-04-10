@@ -15,6 +15,21 @@ const propertyFields = [
     .isInt({ min: 0 })
     .withMessage("Bathrooms must be a non-negative integer"),
   body("area").trim().notEmpty().withMessage("Area is required"),
+  body("description").trim().notEmpty().withMessage("Description is required"),
+  body("highlights").custom((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "string") {
+      const t = value.trim();
+      if (!t) return false;
+      try {
+        const parsed = JSON.parse(t);
+        return Array.isArray(parsed) && parsed.length > 0;
+      } catch {
+        return t.split("\n").map((s) => s.trim()).filter(Boolean).length > 0;
+      }
+    }
+    return false;
+  }).withMessage("At least one highlight is required"),
   body("image")
     .custom((value, { req }) => {
       if (req.file) return true;
@@ -38,5 +53,13 @@ export const updatePropertyRules = [
   body("bathrooms").optional().isInt({ min: 0 }),
   body("area").optional().trim().notEmpty(),
   body("image").optional().trim().notEmpty(),
+  body("description").optional().trim().notEmpty(),
+  body("highlights")
+    .optional()
+    .custom((value) => {
+      if (Array.isArray(value)) return true;
+      if (typeof value === "string") return true;
+      return false;
+    }),
   body("featured").optional().isBoolean(),
 ];

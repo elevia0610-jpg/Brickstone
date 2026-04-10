@@ -15,6 +15,8 @@ const propertySchema = new mongoose.Schema(
     bathrooms: { type: Number, required: true, min: 0 },
     area: { type: String, required: true, trim: true },
     image: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+    highlights: [{ type: String, trim: true }],
     featured: { type: Boolean, default: false },
   },
   { timestamps: true }
