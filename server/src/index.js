@@ -7,6 +7,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import propertyTypeRoutes from "./routes/propertyTypeRoutes.js";
+import homeLoan from "./routes/homeLoan.js";
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
 
@@ -35,6 +36,7 @@ app.use("/api/properties", propertyRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/property-types", propertyTypeRoutes);
+app.use("/api/homeloan", homeLoan);
 app.use((req, res) => {
   res.status(404).json({ message: `Not found: ${req.method} ${req.path}` });
 });
