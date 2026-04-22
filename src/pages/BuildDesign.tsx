@@ -66,7 +66,7 @@ const BuildDesign = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              "Custom Naksha / Floor Plan Design",
+              "Custom Map / Floor Plan Design",
               "Architecture & Interior Planning",
               "Construction as per your budget",
               "Legal approvals & permissions",
@@ -90,7 +90,7 @@ const BuildDesign = () => {
           <div className="grid md:grid-cols-5 gap-6">
             {[
               "Share your land details",
-              "We design your naksha",
+              "We design your map",
               "You approve the plan",
               "Construction begins",
               "Handover on time",
