@@ -8,6 +8,7 @@ const navLinks = [
   { to: "/properties", label: "Properties" },
   { to: "/projects", label: "Projects" },
   { to: "/home-loan", label: "Home Loan" },
+  { to: "/build-design", label: "Build & Design" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
@@ -46,13 +47,6 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <a
-            href="tel:+917428311662"
-            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            +91 74283 11662
-          </a>
           <Link
             to="/contact"
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:scale-[1.02] transition-transform duration-200"

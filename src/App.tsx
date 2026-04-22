@@ -26,6 +26,7 @@ import AdminProperties from "./pages/admin/AdminProperties";
 import AdminProjects from "./pages/admin/AdminProjects";
 import AdminPropertyTypes from "./pages/admin/AdminPropertyTypes";
 import HomeLoan from "./pages/HomeLoan";
+import BuildDesign from "./pages/BuildDesign";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/properties" element={<Properties />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/home-loan" element={<HomeLoan />} />
+              <Route path="/build-design" element={<BuildDesign />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />

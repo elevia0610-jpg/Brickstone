@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Mail, MapPin, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircle, Send, Clock } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
 import { toast } from "sonner";
 
@@ -213,13 +213,18 @@ const Contact = () => {
                     <Phone className="w-5 h-5 text-secondary" /> +91 74283 11662
                   </a>
                   <a
-                    href="mailto:info@brickstonerealestate.in"
+                    href="mailto:brickstonerealestate01@gmail.com"
                     className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Mail className="w-5 h-5 text-secondary" />{" "}
-                    info@brickstonerealestate.in
+                    brickstonerealestate01@gmail.com
                   </a>
-                  
+                  <a
+                    className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Clock className="w-5 h-5 text-secondary" />{" "}
+                    Mon - Fri  ( 9:00 AM - 5:00 PM )
+                  </a>
                 </div>
               </div>
 

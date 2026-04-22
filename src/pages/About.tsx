@@ -114,11 +114,9 @@ const About = () => (
 
       {/* Stats */}
       <SectionReveal className="mt-24">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
           {[
-            { icon: Shield, label: "Properties Sold", value: "500+" },
             { icon: Award, label: "Years Experience", value: "16+" },
-            { icon: Users, label: "Happy Clients", value: "1,200+" },
             { icon: Target, label: "Active Projects", value: "8+" },
           ].map((stat) => (
             <div
