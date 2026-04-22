@@ -223,7 +223,7 @@ const Contact = () => {
                     className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Clock className="w-5 h-5 text-secondary" />{" "}
-                    Mon - Fri  ( 9:00 AM - 5:00 PM )
+                    Mon - Sun  ( 9:00 AM - 5:00 PM )
                   </a>
                 </div>
               </div>
