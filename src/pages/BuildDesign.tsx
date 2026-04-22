@@ -111,7 +111,7 @@ const BuildDesign = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              "Build exactly what YOU want",
+              "Build exactly what you want",
               "Transparent pricing",
               "No hidden costs",
               "Experienced team",
