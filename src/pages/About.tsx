@@ -38,7 +38,7 @@ const About = () => (
               Our Legacy
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              Our journey began over 16 years ago under the name Bajrang Builders, founded by our father who built a strong reputation of trust and reliability in the local real estate and construction material industry.
+              Our journey began over 16 years ago under the name Bajrang Builders, founded by my father who built a strong reputation of trust and reliability in the local real estate and construction material industry.
               <br /><br />
               What started as an offline business has grown into a full-service real estate platform — and that same commitment to quality and honesty still drives everything we do today.
             </p>

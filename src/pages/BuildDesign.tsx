@@ -90,7 +90,7 @@ const BuildDesign = () => {
           <div className="grid md:grid-cols-5 gap-6">
             {[
               "Share your land details",
-              "We design your map",
+              "We design your architecture",
               "You approve the plan",
               "Construction begins",
               "Handover on time",

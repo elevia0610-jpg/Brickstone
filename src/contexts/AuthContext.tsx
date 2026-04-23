@@ -35,6 +35,17 @@ function parsePayload(token: string): Record<string, unknown> | null {
   }
 }
 
+function isTokenExpired(token: string): boolean {
+  const payload = parsePayload(token);
+
+  if (!payload || typeof payload.exp !== "number") {
+    return true;
+  }
+
+  const currentTime = Date.now() / 1000;
+  return payload.exp < currentTime;
+}
+
 function parseAdminFromToken(token: string): AdminUser | null {
   const payload = parsePayload(token);
   if (
@@ -53,7 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const t = getStoredToken();
-    setToken(t);
+
+    if (t && !isTokenExpired(t)) {
+      setToken(t);
+    } else {
+      setStoredToken(null);
+      setToken(null);
+    }
+
     setIsReady(true);
   }, []);
 
@@ -64,6 +82,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       "/api/auth/login",
       { username, password }
     );
+
+    if (isTokenExpired(data.token)) {
+      throw new Error("Received expired token");
+    }
+
     setStoredToken(data.token);
     setToken(data.token);
   }, []);
