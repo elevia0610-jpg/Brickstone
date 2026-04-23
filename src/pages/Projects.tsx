@@ -74,7 +74,7 @@ const Projects = () => {
               <div className="p-2 md:w-2/5">
                 <div className="relative aspect-[4/3] md:aspect-auto md:h-full rounded-2xl overflow-hidden">
                   <img
-                    src={project.image}
+                    src={(project.images && project.images[0]) || project.image || ""}
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"

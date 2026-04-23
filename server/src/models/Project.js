@@ -12,7 +12,8 @@ const projectSchema = new mongoose.Schema(
     type: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     highlights: [{ type: String, trim: true }],
-    image: { type: String, required: true, trim: true },
+    images: [{ type: String, trim: true }],
+    video: { type: String, trim: true },
   },
   { timestamps: true }
 );

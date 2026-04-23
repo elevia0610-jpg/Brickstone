@@ -30,11 +30,28 @@ const propertyFields = [
     }
     return false;
   }).withMessage("At least one highlight is required"),
-  body("image")
+  body("images")
     .custom((value, { req }) => {
-      if (req.file) return true;
+      const uploadedCount = Array.isArray(req.files?.images)
+        ? req.files.images.length
+        : 0;
+      if (uploadedCount > 0) return true;
+
+      // allow sending images as JSON string or newline separated
       if (typeof value === "string" && value.trim().length > 0) return true;
-      throw new Error("Image is required");
+
+      // backwards compatible single image url
+      if (typeof req.body?.image === "string" && req.body.image.trim().length > 0)
+        return true;
+
+      // allow existingImages on update flows
+      if (
+        typeof req.body?.existingImages === "string" &&
+        req.body.existingImages.trim().length > 0
+      )
+        return true;
+
+      throw new Error("At least one image is required");
     }),
   body("featured").optional().isBoolean().withMessage("Featured must be boolean"),
 ];
@@ -52,7 +69,8 @@ export const updatePropertyRules = [
   body("bedrooms").optional().isInt({ min: 0 }),
   body("bathrooms").optional().isInt({ min: 0 }),
   body("area").optional().trim().notEmpty(),
-  body("image").optional().trim().notEmpty(),
+  body("images").optional(),
+  body("video").optional(),
   body("description").optional().trim().notEmpty(),
   body("highlights")
     .optional()

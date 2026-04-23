@@ -22,10 +22,20 @@ export const createProjectRules = [
     }
     return false;
   }).withMessage("At least one highlight is required"),
-  body("image").custom((value, { req }) => {
-    if (req.file) return true;
+  body("images").custom((value, { req }) => {
+    const uploadedCount = Array.isArray(req.files?.images)
+      ? req.files.images.length
+      : 0;
+    if (uploadedCount > 0) return true;
     if (typeof value === "string" && value.trim().length > 0) return true;
-    throw new Error("Image is required");
+    if (typeof req.body?.image === "string" && req.body.image.trim().length > 0)
+      return true;
+    if (
+      typeof req.body?.existingImages === "string" &&
+      req.body.existingImages.trim().length > 0
+    )
+      return true;
+    throw new Error("At least one image is required");
   }),
 ];
 
@@ -42,5 +52,6 @@ export const updateProjectRules = [
       if (typeof value === "string") return true;
       return false;
     }),
-  body("image").optional().trim().notEmpty(),
+  body("images").optional(),
+  body("video").optional(),
 ];

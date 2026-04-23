@@ -27,7 +27,7 @@ const PropertyCard = ({
     <div className="p-2">
       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
         <img
-          src={property.image}
+          src={(property.images && property.images[0]) || property.image || ""}
           alt={property.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"

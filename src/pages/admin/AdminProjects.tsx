@@ -30,6 +30,8 @@ const emptyForm: Omit<Project, "id"> = {
   description: "",
   highlights: [""],
   image: "",
+  images: [],
+  video: "",
 };
 
 function getErrorMessage(err: unknown): string {
@@ -66,16 +68,18 @@ export default function AdminProjects() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Omit<Project, "id">>(emptyForm);
   const [highlightsText, setHighlightsText] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   useEffect(() => {
     return () => {
-      if (imagePreview.startsWith("blob:")) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      imagePreviews.forEach((p) => p.startsWith("blob:") && URL.revokeObjectURL(p));
+      if (videoPreview.startsWith("blob:")) URL.revokeObjectURL(videoPreview);
     };
-  }, [imagePreview]);
+  }, [imagePreviews, videoPreview]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -90,24 +94,25 @@ export default function AdminProjects() {
       fd.append("type", form.type);
       fd.append("description", form.description);
       fd.append("highlights", JSON.stringify(highlights));
+      fd.append("existingImages", JSON.stringify(existingImages));
+      if (form.video) fd.append("existingVideo", form.video);
 
-      if (!imageFile && !editingId) {
-        toast.error("Image is required");
-        return;
+      newImages.forEach((f) => fd.append("images", f));
+      if (videoFile) fd.append("video", videoFile);
+
+      if (newImages.length === 0 && existingImages.length === 0 && form.image) {
+        fd.append("image", form.image);
       }
 
-      if (imageFile instanceof File) {
-        fd.append("image", imageFile);
+      if (!editingId && newImages.length === 0 && existingImages.length === 0 && !form.image) {
+        toast.error("At least one image is required");
+        return;
       }
 
       if (editingId) {
         await api.put(`/api/projects/${editingId}`, fd);
       } else {
-        await api.post("/api/projects", fd, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await api.post("/api/projects", fd);
       }
     },
     onSuccess: () => {
@@ -117,8 +122,11 @@ export default function AdminProjects() {
       setEditingId(null);
       setForm(emptyForm);
       setHighlightsText("");
-      setImageFile(null);
-      setImagePreview("");
+      setNewImages([]);
+      setExistingImages([]);
+      setImagePreviews([]);
+      setVideoFile(null);
+      setVideoPreview("");
     },
     onError: (err) =>
       toast.error(
@@ -142,8 +150,11 @@ export default function AdminProjects() {
     setEditingId(null);
     setForm(emptyForm);
     setHighlightsText("");
-    setImageFile(null);
-    setImagePreview("");
+    setNewImages([]);
+    setExistingImages([]);
+    setImagePreviews([]);
+    setVideoFile(null);
+    setVideoPreview("");
     setDialogOpen(true);
   }
 
@@ -156,11 +167,17 @@ export default function AdminProjects() {
       type: p.type,
       description: p.description,
       highlights: p.highlights,
-      image: p.image,
+      image: p.image || "",
+      images: p.images || (p.image ? [p.image] : []),
+      video: p.video || "",
     });
     setHighlightsText(highlightsToText(p.highlights));
-    setImageFile(null);
-    setImagePreview(p.image);
+    const imgs = p.images || (p.image ? [p.image] : []);
+    setExistingImages(imgs);
+    setImagePreviews(imgs);
+    setNewImages([]);
+    setVideoFile(null);
+    setVideoPreview(p.video || "");
     setDialogOpen(true);
   }
 
@@ -212,7 +229,7 @@ export default function AdminProjects() {
                 <td>
                   <img
                     className="admin-thumb"
-                    src={p.image}
+                    src={(p.images && p.images[0]) || p.image || ""}
                     alt=""
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.opacity = "0.3";
@@ -323,36 +340,76 @@ export default function AdminProjects() {
               />
             </div>
             <div>
-              <label className="admin-label">Image</label>
+              <label className="admin-label">Images (max 10)</label>
               <input
                 type="file"
+                multiple
                 accept="image/*"
                 className="admin-input"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] || null;
-                  setImageFile(file);
-                  if (file) {
-                    const url = URL.createObjectURL(file);
-                    setImagePreview(url);
-                  } else {
-                    setImagePreview(form.image || "");
-                  }
+                  const files = Array.from(e.target.files || []);
+                  imagePreviews.forEach((p) => {
+                    if (p.startsWith("blob:")) URL.revokeObjectURL(p);
+                  });
+                  setNewImages(files);
+                  const blobs = files.map((f) => URL.createObjectURL(f));
+                  setImagePreviews([...existingImages, ...blobs]);
                 }}
               />
-              <input type="hidden" value={form.image} readOnly />
-              {imagePreview ? (
+              {imagePreviews.length ? (
+                <div
+                  style={{
+                    marginTop: 10,
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+                    gap: 10,
+                  }}
+                >
+                  {imagePreviews.map((src) => (
+                    <img
+                      key={src}
+                      src={src}
+                      alt="Preview"
+                      style={{
+                        width: "100%",
+                        height: 90,
+                        objectFit: "cover",
+                        borderRadius: 10,
+                        border: "1px solid #e4e4e7",
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            <div>
+              <label className="admin-label">Video (optional)</label>
+              <input
+                type="file"
+                accept="video/*"
+                className="admin-input"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (videoPreview.startsWith("blob:")) URL.revokeObjectURL(videoPreview);
+                  setVideoFile(file);
+                  setVideoPreview(file ? URL.createObjectURL(file) : form.video || "");
+                }}
+              />
+              {videoPreview ? (
                 <div style={{ marginTop: 10 }}>
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
+                  <video
+                    controls
+                    preload="metadata"
                     style={{
                       width: "100%",
                       maxHeight: 240,
-                      objectFit: "cover",
                       borderRadius: 10,
                       border: "1px solid #e4e4e7",
+                      background: "#111827",
                     }}
-                  />
+                  >
+                    <source src={videoPreview} />
+                  </video>
                 </div>
               ) : null}
             </div>

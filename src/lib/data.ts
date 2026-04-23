@@ -17,7 +17,12 @@ export type Property = {
   bedrooms: number;
   bathrooms: number;
   area: string;
-  image: string;
+  /** Backwards-compatible single image */
+  image?: string;
+  /** Preferred: multiple images */
+  images?: string[];
+  /** Optional video url */
+  video?: string;
   featured?: boolean;
   description: string;
   highlights: string[];
@@ -31,7 +36,9 @@ export type Project = {
   type: string;
   description: string;
   highlights: string[];
-  image: string;
+  image?: string;
+  images?: string[];
+  video?: string;
 };
 
 export const properties: Property[] = [
@@ -46,6 +53,7 @@ export const properties: Property[] = [
     bathrooms: 3,
     area: "2,800 sq.ft",
     image: property1,
+    images: [property1],
     featured: true,
     description:
       "Experience the epitome of luxury living in our Skyline Penthouse, boasting breathtaking city views, state-of-the-art amenities, and exquisite interiors designed for the discerning homeowner.",
@@ -65,6 +73,7 @@ export const properties: Property[] = [
     bathrooms: 4,
     area: "4,200 sq.ft",
     image: property2,
+    images: [property2],
     featured: true,
     description:
       "Step into timeless elegance with our Heritage Row Villa, a beautifully restored property that combines classic architecture with modern comforts, nestled in the heart of Koregaon Park.",
@@ -84,6 +93,7 @@ export const properties: Property[] = [
     bathrooms: 2,
     area: "3,500 sq.ft",
     image: property3,
+    images: [property3],
     featured: true,
     description:
       "Elevate your business presence with our Metro Business Hub, a premium commercial space located in the bustling BKC area, offering modern design, high foot traffic, and unparalleled connectivity.",
@@ -110,6 +120,7 @@ export const projects: Project[] = [
       "Smart home integration",
     ],
     image: project1,
+    images: [project1],
   },
   {
     id: "2",
@@ -126,6 +137,7 @@ export const projects: Project[] = [
       "Clubhouse & spa",
     ],
     image: project2,
+    images: [project2],
   },
   {
     id: "3",
@@ -142,6 +154,7 @@ export const projects: Project[] = [
       "LEED certified",
     ],
     image: project3,
+    images: [project3],
   },
 ];
 
