@@ -6,10 +6,7 @@ const baseURL =
     : "";
 
 export const api = axios.create({
-  baseURL,
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
+  baseURL
 });
 
 const TOKEN_KEY = "brickstone_admin_token";
