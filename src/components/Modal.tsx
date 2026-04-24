@@ -65,7 +65,8 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
               style={{
                 background: "#fff",
                 borderRadius: 16,
-                overflow: "hidden",
+                maxHeight: "90vh",        
+                overflowY: "auto",
                 boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
               }}
             >

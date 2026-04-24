@@ -24,7 +24,7 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const featuredProperties = properties.filter((p) => p.featured);
-
+  const [searchQuery, setSearchQuery] = useState("");
   return (
     <main>
       {/* Hero */}
@@ -83,12 +83,14 @@ const Index = () => {
               <input
                 type="text"
                 placeholder="Search by location, project, or property type..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <Link
-              to="/properties"
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-2xl text-sm font-semibold hover:scale-[1.02] transition-transform duration-200 text-center shrink-0"
+              to={`/properties?q=${encodeURIComponent(searchQuery)}&type=${activeTab}`}
+              className="bg-primary text-primary-foreground px-6 py-4 rounded-2xl text-sm font-semibold hover:scale-[1.02] transition-transform duration-200 text-center shrink-0"
             >
               Search
             </Link>

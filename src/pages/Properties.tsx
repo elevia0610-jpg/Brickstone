@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useResolvedProperties } from "@/hooks/usePublicListings";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api"; // ✅ USE THIS (not axios)
+import { api } from "@/lib/api";
 
 import PropertyCard from "@/components/PropertyCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -11,13 +12,32 @@ import type { Property } from "@/lib/data";
 const types = ["All", "Buy", "Rent", "Lease"] as const;
 
 const Properties = () => {
+  const location = useLocation();
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeType, setActiveType] = useState<string>("All");
   const [activePropType, setActivePropType] = useState<string>("All");
 
   const { properties, isLoading, usingFallback } = useResolvedProperties();
   const [selected, setSelected] = useState<Property | null>(null);
 
-  // ✅ SAFE FETCH (handles wrong API responses)
+  // ✅ Sync URL → state
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    const q = params.get("q")?.toLowerCase() || "";
+    const type = params.get("type");
+
+    setSearchQuery(q);
+
+    if (type) {
+      setActiveType(type);
+    } else {
+      setActiveType("All");
+    }
+  }, [location.search]);
+
+  // ✅ Fetch property types safely
   const {
     data: propertyTypesData = [],
     isLoading: typesLoading,
@@ -26,31 +46,37 @@ const Properties = () => {
     queryFn: async () => {
       const res = await api.get("/api/property-types");
 
-      // ✅ Always return array (prevents crash)
       if (Array.isArray(res.data)) return res.data;
       if (Array.isArray(res.data?.data)) return res.data.data;
 
-      return []; // fallback
+      return [];
     },
   });
 
-  // ✅ SAFE ARRAY (prevents .map crash)
   const safePropertyTypes = Array.isArray(propertyTypesData)
     ? propertyTypesData
     : [];
 
-  // ✅ Build filter list safely
   const propertyTypes = [
     "All",
     ...safePropertyTypes.map((t: any) => t.name),
   ];
 
-  // ✅ Filtering logic
+  // ✅ FINAL FILTER LOGIC
   const filtered = properties.filter((p) => {
-    if (activeType !== "All" && p.type !== activeType) return false;
-    if (activePropType !== "All" && p.propertyType !== activePropType)
-      return false;
-    return true;
+    const matchesSearch =
+      !searchQuery ||
+      p.title.toLowerCase().includes(searchQuery) ||
+      p.location.toLowerCase().includes(searchQuery) ||
+      p.propertyType.toLowerCase().includes(searchQuery);
+
+    const matchesType =
+      activeType === "All" || p.type === activeType;
+
+    const matchesPropType =
+      activePropType === "All" || p.propertyType === activePropType;
+
+    return matchesSearch && matchesType && matchesPropType;
   });
 
   return (
@@ -67,6 +93,7 @@ const Properties = () => {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-6 mb-12">
+
             {/* TYPE FILTER */}
             <div className="flex bg-muted rounded-2xl p-1">
               {types.map((t) => (
@@ -138,7 +165,7 @@ const Properties = () => {
         {/* EMPTY STATE */}
         {!isLoading && filtered.length === 0 && (
           <p className="text-center text-muted-foreground py-16">
-            No properties match your filters.
+            No properties match your search.
           </p>
         )}
       </div>
